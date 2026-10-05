@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Fire ESP Panel</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#070a10;
+    color:#fff;
+}
+
+.panel{
+    width:340px;
+    padding:22px;
+    border-radius:20px;
+    background:#111722;
+    border:1px solid #293343;
+    box-shadow:0 20px 60px rgba(0,0,0,.55);
+}
+
+.logo{
+    text-align:center;
+    font-size:25px;
+    font-weight:bold;
+}
+
+.subtitle{
+    text-align:center;
+    color:#7e899c;
+    font-size:12px;
+    margin-top:5px;
+    margin-bottom:22px;
+}
+
+.status{
+    display:flex;
+    justify-content:space-between;
+    padding:13px;
+    border-radius:12px;
+    background:#181f2b;
+    margin-bottom:12px;
+}
+
+#status{
+    color:#ff5252;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.option{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px;
+    background:#181f2b;
+    border-radius:12px;
+    margin-top:9px;
+}
+
+.option b{font-size:14px}
+.option small{
+    display:block;
+    color:#788498;
+    margin-top:4px;
+}
+
+.toggle{
+    position:relative;
+    width:50px;
+    height:27px;
+}
+
+.toggle input{display:none}
+
+.slider{
+    position:absolute;
+    inset:0;
+    border-radius:30px;
+    background:#353d4b;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.slider:before{
+    content:"";
+    position:absolute;
+    width:21px;
+    height:21px;
+    left:3px;
+    top:3px;
+    background:white;
+    border-radius:50%;
+    transition:.25s;
+}
+
+input:checked + .slider{
+    background:#16c784;
+}
+
+input:checked + .slider:before{
+    transform:translateX(23px);
+}
+
+.players{
+    margin-top:17px;
+}
+
+.player{
+    display:flex;
+    justify-content:space-between;
+    padding:11px;
+    margin-top:7px;
+    border-radius:9px;
+    background:#141b26;
+    border:1px solid #16c784;
+    font-size:13px;
+}
+
+.distance{
+    color:#16c784;
+    font-weight:bold;
+}
+
+.open-game{
+    width:100%;
+    margin-top:20px;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    background:#16c784;
+    color:#06100b;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.open-game:active{
+    transform:scale(.98);
+}
+
+.footer{
+    text-align:center;
+    margin-top:15px;
+    color:#596578;
+    font-size:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+
+    <div class="logo">FREE FIRE</div>
+    <div class="subtitle">ESP • Ambiente privado de teste</div>
+
+    <div class="status">
+        <span>ESP STATUS</span>
+        <span id="status">OFF</span>
+    </div>
+
+    <div class="option">
+        <div>
+            <b>ESP</b>
+            <small>Ativar visualização</small>
+        </div>
+
+        <label class="toggle">
+            <input type="checkbox" id="esp">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="option">
+        <div>
+            <b>BOX</b>
+            <small>Caixa do jogador</small>
+        </div>
+
+        <label class="toggle">
+            <input type="checkbox" id="box" checked>
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="option">
+        <div>
+            <b>NOME</b>
+            <small>Nome do jogador</small>
+        </div>
+
+        <label class="toggle">
+            <input type="checkbox" id="name" checked>
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="option">
+        <div>
+            <b>DISTÂNCIA</b>
+            <small>Distância em metros</small>
+        </div>
+
+        <label class="toggle">
+            <input type="checkbox" id="distance" checked>
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="players" id="players"></div>
+
+    <button class="open-game" onclick="openGame()">
+        ▶ ABRIR FREE FIRE
+    </button>
+
+    <div class="footer">
+        PROTÓTIPO DE INTERFACE • API OFICIAL NECESSÁRIA
+    </div>
+
+</div>
+
+<script>
+
+const esp = document.getElementById("esp");
+const box = document.getElementById("box");
+const name = document.getElementById("name");
+const distance = document.getElementById("distance");
+
+const status = document.getElementById("status");
+const players = document.getElementById("players");
+
+const testPlayers = [
+    {name:"Player_01", distance:18},
+    {name:"Player_02", distance:35},
+    {name:"Player_03", distance:62}
+];
+
+function updateESP(){
+
+    if(!esp.checked){
+        players.innerHTML = "";
+        status.textContent = "OFF";
+        status.style.color = "#ff5252";
+        return;
+    }
+
+    status.textContent = "ON";
+    status.style.color = "#16c784";
+
+    players.innerHTML = testPlayers.map(player => {
+
+        return `
+        <div class="player"
+             style="border:${box.checked
+             ? "1px solid #16c784"
+             : "1px solid #293343"}">
+
+            <span>
+                ${name.checked ? player.name : "Jogador"}
+            </span>
+
+            ${
+                distance.checked
+                ? `<span class="distance">
+                     ${player.distance}m
+                   </span>`
+                : ""
+            }
+
+        </div>
+        `;
+
+    }).join("");
+}
+
+function openGame(){
+
+    /*
+      Em Android, substitua pelo deep link oficial
+      fornecido pelo ambiente de testes.
+
+      Exemplo genérico:
+      window.location.href = "SEU_DEEP_LINK_OFICIAL";
+    */
+
+    alert("Configure aqui o deep link oficial do Free Fire.");
+}
+
+esp.addEventListener("change", updateESP);
+box.addEventListener("change", updateESP);
+name.addEventListener("change", updateESP);
+distance.addEventListener("change", updateESP);
+
+updateESP();
+
+</script>
+
+</body>
+</html>
